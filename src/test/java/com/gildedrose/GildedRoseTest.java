@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,57 +15,46 @@ class GildedRoseTest {
     @ParameterizedTest
     @MethodSource("withSulfuras")
     void testWhenSulfuras(Item initialItem, int expectedSellIn, int expectedQuality) {
+        GildedRose.updateItemsAfterDay(List.of(initialItem));
 
-        GildedRose app = new GildedRose(new Item[]{initialItem});
-
-        app.updateQuality();
-
-        Item item = app.getItems()[0];
-        assertEquals(initialItem.name, item.name);
-        assertEquals(expectedSellIn, item.sellIn);
-        assertEquals(expectedQuality, item.quality);
+        assertEquals(expectedSellIn, initialItem.sellIn);
+        assertEquals(expectedQuality, initialItem.quality);
     }
 
     @ParameterizedTest
     @MethodSource("withRegularItems")
     void testWhenRegularItems(Item initialItem, int expectedSellIn, int expectedQuality) {
+        GildedRose.updateItemsAfterDay(List.of(initialItem));
 
-        GildedRose app = new GildedRose(new Item[]{initialItem});
-
-        app.updateQuality();
-
-        Item item = app.getItems()[0];
-        assertEquals(initialItem.name, item.name);
-        assertEquals(expectedSellIn, item.sellIn);
-        assertEquals(expectedQuality, item.quality);
+        assertEquals(expectedSellIn, initialItem.sellIn);
+        assertEquals(expectedQuality, initialItem.quality);
     }
 
     @ParameterizedTest
     @MethodSource("withAgedBrie")
     void testWhenAgedBrie(Item initialItem, int expectedSellIn, int expectedQuality) {
+        GildedRose.updateItemsAfterDay(List.of(initialItem));
 
-        GildedRose app = new GildedRose(new Item[]{initialItem});
-
-        app.updateQuality();
-
-        Item item = app.getItems()[0];
-        assertEquals(initialItem.name, item.name);
-        assertEquals(expectedSellIn, item.sellIn);
-        assertEquals(expectedQuality, item.quality);
+        assertEquals(expectedSellIn, initialItem.sellIn);
+        assertEquals(expectedQuality, initialItem.quality);
     }
 
     @ParameterizedTest
     @MethodSource("withBackStageTickets")
     void testWhenBackStageTickets(Item initialItem, int expectedSellIn, int expectedQuality) {
+        GildedRose.updateItemsAfterDay(List.of(initialItem));
 
-        GildedRose app = new GildedRose(new Item[]{initialItem});
+        assertEquals(expectedSellIn, initialItem.sellIn);
+        assertEquals(expectedQuality, initialItem.quality);
+    }
 
-        app.updateQuality();
+    @ParameterizedTest
+    @MethodSource("withConjuredItems")
+    void testWhenConjuredItems(Item initialItem, int expectedSellIn, int expectedQuality) {
+        GildedRose.updateItemsAfterDay(List.of(initialItem));
 
-        Item item = app.getItems()[0];
-        assertEquals(initialItem.name, item.name);
-        assertEquals(expectedSellIn, item.sellIn);
-        assertEquals(expectedQuality, item.quality);
+        assertEquals(expectedSellIn, initialItem.sellIn);
+        assertEquals(expectedQuality, initialItem.quality);
     }
 
     private static Stream<Arguments> withAgedBrie() {
@@ -72,18 +62,32 @@ class GildedRoseTest {
         return Stream.of(
                 Arguments.of(new Item(agedBrie, 10, 0), 9, 1),
                 Arguments.of(new Item(agedBrie, 10, 50), 9, 50),
+                Arguments.of(new Item(agedBrie, 0, 49), -1, 50),
                 Arguments.of(new Item(agedBrie, 0, 10), -1, 12),
                 Arguments.of(new Item(agedBrie, 0, 0), -1, 2)
         );
     }
 
     private static Stream<Arguments> withRegularItems() {
-        String regularItem = "regular item";
+        String regularItem = "Regular item";
         return Stream.of(
                 Arguments.of(new Item(regularItem, 10, 0), 9, 0),
                 Arguments.of(new Item(regularItem, 10, 10), 9, 9),
                 Arguments.of(new Item(regularItem, 0, 10), -1, 8),
-                Arguments.of(new Item(regularItem, 0, 0), -1, 0)
+                Arguments.of(new Item(regularItem, 0, 0), -1, 0),
+                Arguments.of(new Item(regularItem, -1, 1), -2, 0)
+
+        );
+    }
+
+    private static Stream<Arguments> withConjuredItems() {
+        String regularItem = "Conjured item";
+        return Stream.of(
+                Arguments.of(new Item(regularItem, 10, 0), 9, 0),
+                Arguments.of(new Item(regularItem, 10, 10), 9, 8),
+                Arguments.of(new Item(regularItem, 0, 10), -1, 6),
+                Arguments.of(new Item(regularItem, 0, 0), -1, 0),
+                Arguments.of(new Item(regularItem, -1, 1), -2, 0)
         );
     }
 
